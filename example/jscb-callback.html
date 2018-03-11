@@ -1,0 +1,91 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JavaScript Callbacks callback</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div>
+        <div>
+            <img id="dance" width="480" height="360" />
+        </div>
+        <script src="dance.js"></script>
+
+        <p>
+            <select id="joke-type">
+                <option value="none"></option>
+                <option value="explicit">explicit</option>
+                <option value="dev">dev</option>
+                <option value="movie">movie</option>
+                <option value="food">food</option>
+                <option value="celebrity">celebrity</option>
+                <option value="science">science</option>
+                <option value="political">political</option>
+                <option value="sport">sport</option>
+                <option value="religion">religion</option>
+                <option value="animal">animal</option>
+                <option value="music">music</option>
+                <option value="history">history</option>
+                <option value="travel">travel</option>
+                <option value="career">career</option>
+                <option value="money">money</option>
+                <option value="fashion">fashion</option>
+            </select>
+            <button id="get-joke">Get joke!</button>
+        </p>
+        <p id="joke-display">
+        </p>
+    </div>
+    <script>
+        var jokeTypeElement = document.getElementById("joke-type")
+        var getJokeElement = document.getElementById("get-joke");
+        var displayJokeElement = document.getElementById("joke-display");
+
+        getJokeElement.addEventListener("click", function (e) {
+            getJoke(jokeTypeElement.value, function (err, jokeText) {
+                if (err) return alert("Something went wrong!");
+
+                displayJokeElement.innerText = jokeText;
+            });
+        }, false);
+
+
+        function getJoke(category, cb) {
+            var url = "https://api.chucknorris.io/jokes/random?category=" + encodeURIComponent(category) + "";
+            getJSON(url, function (err, data) {
+                if (err) return cb(err);
+                cb(null, data.value);
+            });
+        }
+
+        function getJSON(url, cb) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.onload = function (e) {
+                try {
+                    if (xhr.readyState !== 4) return;
+
+                    if (xhr.status !== 200) {
+                        throw new Error("unexpected response " + xhr.status + "");
+                    }
+
+                    const data = JSON.parse(xhr.responseText);
+                    cb(null, data);
+                }
+                catch (err) {
+                    cb(err);
+                }
+            };
+            xhr.onerror = function (e) {
+                cb(new Error("XHR error"));
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>dance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div>
+        <img id="dance" width="480" height="360" />
+    </div>
+    <script src="dance.js"></script>
+
+    <p>
+        <button id="get-joke-sync">Get joke sync!</button>
+        <button id="get-joke-async">Get joke async!</button>
+    </p>
+
+    <p id="joke-display">
+    </p>
+
+
+    <script>
+        {
+            const getJokeElement = document.getElementById("get-joke-sync");
+            const displayJokeElement = document.getElementById("joke-display");
+
+            const getJoke = (category) => {
+                var url = "https://api.chucknorris.io/jokes/random?category=" + encodeURIComponent(category) + "";
+                var data = getJSON(url);
+                if (data.failure) {
+                    throw new Error(data.reason);
+                }
+                return data.value;
+            };
+
+            const getJSON = (url) => {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", url, false);
+                xhr.send();
+
+                if (xhr.status !== 200) {
+                    throw new Error("unexpected response " + xhr.status + "");
+                }
+
+                const data = JSON.parse(xhr.responseText);
+                return data;
+            };
+
+            getJokeElement.addEventListener("click", function (e) {
+                try {
+                    var jokeText = getJoke("dev");
+                    displayJokeElement.innerText = jokeText;
+                }
+                catch (err) {
+                    alert(err.message);
+                }
+            }, false);
+        }
+    </script>
+
+    <script>
+        {
+            const getJokeElement = document.getElementById("get-joke-async");
+            const displayJokeElement = document.getElementById("joke-display");
+
+            const getJoke = (category, cb) => {
+                var url = "https://api.chucknorris.io/jokes/random?category=" + encodeURIComponent(category) + "";
+                getJSON(url, function (err, data) {
+                    if (err) return cb(err);
+
+                    try {
+                        if (data.failure) {
+                            throw new Error(data.reason);
+                        }
+
+                        cb(null, data.value);
+                    }
+                    catch (err) {
+                        cb(err);
+                    }
+                });
+            }
+
+            const getJSON = (url, cb) => {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", url);
+                xhr.onload = function (e) {
+                    try {
+                        if (xhr.readyState !== 4) return;
+
+                        if (xhr.status !== 200) return cb(new Error("unexpected response " + xhr.status + ""));
+
+                        const data = JSON.parse(xhr.responseText);
+                        cb(null, data);
+                    }
+                    catch (err) {
+                        cb(err);
+                    }
+                };
+                xhr.onerror = function (err) {
+                    cb(err);
+                };
+                xhr.send();
+            }
+
+            getJokeElement.addEventListener("click", function (e) {
+                getJoke("dev", function (err, jokeText) {
+                    if (err) return alert(err.message);
+
+                    displayJokeElement.innerText = jokeText;
+                });
+            }, false);
+        }
+    </script>
+
+</body>
+
+</html>

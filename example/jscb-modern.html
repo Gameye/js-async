@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JavaScript Callbacks modern</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div>
+        <div>
+            <img id="dance" width="480" height="360" />
+        </div>
+        <script src="dance.js"></script>
+
+        <p>
+            <select id="joke-type">
+                <option value="none"></option>
+                <option value="explicit">explicit</option>
+                <option value="dev">dev</option>
+                <option value="movie">movie</option>
+                <option value="food">food</option>
+                <option value="celebrity">celebrity</option>
+                <option value="science">science</option>
+                <option value="political">political</option>
+                <option value="sport">sport</option>
+                <option value="religion">religion</option>
+                <option value="animal">animal</option>
+                <option value="music">music</option>
+                <option value="history">history</option>
+                <option value="travel">travel</option>
+                <option value="career">career</option>
+                <option value="money">money</option>
+                <option value="fashion">fashion</option>
+            </select>
+            <button id="get-joke">Get joke!</button>
+        </p>
+        <p id="joke-display">
+        </p>
+    </div>
+    <script>
+        const jokeTypeElement = document.getElementById("joke-type")
+        const getJokeElement = document.getElementById("get-joke");
+        const displayJokeElement = document.getElementById("joke-display");
+
+        getJokeElement.addEventListener("click", async e => {
+            try {
+                const jokeText = await getJoke(jokeTypeElement.value);
+                displayJokeElement.innerText = jokeText;
+            }
+            catch (err) {
+                alert("Something went wrong!");
+            }
+        }, false);
+
+
+        async function getJoke(category) {
+            const url = `https://api.chucknorris.io/jokes/random?category=${encodeURIComponent(category)}`;
+            const data = await getJSON(url);
+            return data.value;
+        }
+
+        async function getJSON(url) {
+            const response = await fetch(url);
+
+            if (response.status !== 200) {
+                throw new Error(`unexpected response ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        }
+    </script>
+</body>
+
+</html>
