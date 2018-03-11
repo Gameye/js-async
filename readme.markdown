@@ -13,11 +13,13 @@ In this article we talk about describe three patterns, the Synchronous pattern,
 the Callback pattern and the Promise pattern.
 
 ##  Syncronous
-This is 
+// TODO
 
 ## Callback
+// TODO
 
 ## Promise
+// TODO
 
 # Chuck Norris
 Imaging we are building an API that will that wil return a Chuck Norris joke
